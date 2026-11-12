@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Second Conditional - Interactive Worksheet</title>
+    <!-- Google Fonts: Inter & Oswald for the bold condensed heading -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Oswald:wght@700&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        heading: ['Oswald', 'sans-serif'],
+                    },
+                    colors: {
+                        crimson: '#c81e2b',
+                        cream: '#f2f5e6',
+                        creamDark: '#e2e7d0',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom animations for tactile feedback */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20% { transform: translateX(-6px); }
+            40% { transform: translateX(6px); }
+            60% { transform: translateX(-4px); }
+            80% { transform: translateX(4px); }
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0.92); opacity: 0.6; }
+            60% { transform: scale(1.03); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .animate-shake {
+            animation: shake 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+        }
+
+        .animate-pop {
+            animation: popIn 0.25s ease-out forwards;
+        }
+
+        .word-chip {
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+            transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+        }
+
+        .word-chip:active {
+            transform: scale(0.96);
+        }
+
+        .word-chip.dragging {
+            opacity: 0.45;
+            transform: scale(0.95);
+        }
+
+        .word-chip.selected {
+            ring: 3px;
+            box-shadow: 0 0 0 3px #c81e2b;
+            background-color: #fff1f2;
+            border-color: #c81e2b;
+        }
+
+        .drop-zone {
+            transition: all 0.2s ease;
+            touch-action: manipulation;
+        }
+
+        .drop-zone.drag-over {
+            background-color: #fef2f2;
+            border-color: #c81e2b;
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body class="bg-stone-100 text-slate-800 font-sans min-h-screen py-6 px-3 sm:px-6 lg:px-8">
+
+    <!-- Main Worksheet Container -->
+    <main class="max-w-4xl mx-auto bg-white rounded-3xl shadow-xl border border-stone-200/80 p-5 sm:p-8 md:p-10">
+
+        <!-- Worksheet Header matching the original style -->
+        <header class="text-center mb-6">
+            <h1 class="font-heading text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-crimson uppercase">
+                SECOND CONDITIONAL
+            </h1>
+            <p class="mt-3 text-base sm:text-lg font-bold text-slate-900 text-left">
+                1. Fill in the blanks with the correct form of the verb in brackets.
+            </p>
+        </header>
+
+        <!-- Score, Controls & Live Feedback Bar -->
+        <div class="flex flex-wrap items-center justify-between gap-3 mb-5 bg-slate-50 border border-slate-200/80 rounded-2xl px-4 py-3">
+            <div class="flex items-center gap-3">
+                <div class="flex items-center gap-1.5">
+                    <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Score:</span>
+                    <span id="score-display" class="text-base sm:text-lg font-bold text-crimson">0 / 20</span>
+                </div>
+                <div class="w-24 sm:w-32 h-2.5 bg-slate-200 rounded-full overflow-hidden">
+                    <div id="progress-bar" class="h-full bg-emerald-500 transition-all duration-300 rounded-full" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <!-- Live Feedback Toast Area -->
+            <div id="feedback-banner" class="text-sm font-semibold px-3 py-1 rounded-lg transition-opacity duration-300 opacity-0">
+                <!-- Dynamic feedback text -->
+            </div>
+
+            <div class="flex items-center gap-2.5 ml-auto sm:ml-0">
+                <button id="toggle-answers-btn" type="button" class="inline-flex items-center gap-1.5 px-3.5 py-2 bg-amber-500 hover:bg-amber-600 active:scale-95 text-white text-sm font-semibold rounded-xl shadow-sm transition-all cursor-pointer">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                    <span id="toggle-answers-text">Đáp án</span>
+                </button>
+
+                <button id="reset-btn" type="button" class="inline-flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 active:scale-95 text-white text-sm font-semibold rounded-xl shadow-sm transition-all cursor-pointer">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                    Reset
+                </button>
+            </div>
+        </div>
+
+        <!-- Sticky Word Bank Section -->
+        <section aria-label="Word Bank" class="sticky top-2 z-20 mb-6 bg-white/95 backdrop-blur-md border-2 border-creamDark rounded-2xl p-4 shadow-md">
+            <div class="flex items-center justify-between mb-2.5">
+                <span class="text-xs font-bold uppercase tracking-wider text-crimson flex items-center gap-1.5">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M7 11.5V14m0-2.5v-6a1.5 1.5 0 113 0m-3 6a1.5 1.5 0 00-3 0v2a7.5 7.5 0 0015 0v-5a1.5 1.5 0 00-3 0m-6-3V11m0-5.5v-1a1.5 1.5 0 013 0v1m0 0V11m0-5.5a1.5 1.5 0 013 0v3m0 0V11" />
+                    </svg>
+                    Word Bank (Drag & drop or tap a word, then tap a blank)
+                </span>
+                <span id="selected-hint" class="hidden text-xs font-medium text-crimson bg-rose-50 px-2.5 py-0.5 rounded-full border border-rose-200">
+                    Word selected — tap any blank
+                </span>
+            </div>
+
+            <div id="word-bank" class="flex flex-wrap gap-2 min-h-[48px] items-center">
+                <!-- Draggable word chips injected by JavaScript -->
+            </div>
+        </section>
+
+        <!-- Sentences Container styled with the soft cream rounded box -->
+        <section class="bg-cream rounded-3xl p-5 sm:p-8 border border-creamDark shadow-inner">
+            <ol id="sentences-container" class="space-y-5 text-base sm:text-lg text-slate-900 leading-relaxed">
+                <!-- Sentences injected by JavaScript -->
+            </ol>
+        </section>
+
+        <!-- Completion Celebration Banner (Hidden until all 20 blanks are solved) -->
+        <div id="completion-modal" class="hidden fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
+            <div class="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 text-center shadow-2xl border border-stone-200 animate-pop">
+                <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-9 w-9" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>
+                </div>
+                <h2 class="text-2xl font-bold text-slate-900 mb-2">Excellent Work!</h2>
+                <p class="text-slate-600 mb-6">You completed all 10 Second Conditional sentences with 100% accuracy!</p>
+                <div class="flex gap-3 justify-center">
+                    <button id="modal-close-btn" type="button" class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold rounded-xl transition-colors cursor-pointer">
+                        Review Answers
+                    </button>
+                    <button id="modal-reset-btn" type="button" class="px-5 py-2.5 bg-crimson hover:bg-red-700 text-white font-semibold rounded-xl shadow-md transition-colors cursor-pointer">
+                        Practice Again
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        // Exercise Data matching the exact sentences and verbs from the image, with Vietnamese explanations & translations
+        const exerciseData = [
+            {
+                id: 1,
+                parts: [
+                    { text: "If I " },
+                    { blankId: "b1", answer: "were", hint: "(be)" },
+                    { text: " you, I " },
+                    { blankId: "b2", answer: "would study", hint: "(study)" },
+                    { text: " harder for the exam." }
+                ],
+                explanation: "Đây là câu điều kiện loại 2 diễn tả giả định không có thật ở hiện tại (tôi không thể là bạn). Ở mệnh đề <strong>If</strong>, động từ <em>to be</em> luôn chia là <strong>were</strong> cho tất cả các ngôi. Ở mệnh đề chính chỉ kết quả giả định, ta dùng cấu trúc <strong>would + động từ nguyên mẫu</strong> (<strong>would study</strong>).",
+                translation: "Nếu tôi <strong>là</strong> bạn, tôi <strong>sẽ học</strong> chăm chỉ hơn cho kỳ thi."
+            },
+            {
+                id: 2,
+                parts: [
+                    { text: "She " },
+                    { blankId: "b3", answer: "would travel", hint: "(travel)" },
+                    { text: " around the world if she " },
+                    { blankId: "b4", answer: "had", hint: "(have)" },
+                    { text: " enough money." }
+                ],
+                explanation: "Trong câu này, mệnh đề chính đứng trước và mệnh đề <strong>If</strong> đứng sau. Mệnh đề chính diễn tả kết quả giả định nên dùng <strong>would + V nguyên mẫu</strong> (<strong>would travel</strong>). Mệnh đề <strong>If</strong> chia ở thì Quá khứ đơn, nên động từ <em>have</em> chuyển thành quá khứ bất quy tắc là <strong>had</strong>.",
+                translation: "Cô ấy <strong>sẽ đi du lịch</strong> vòng quanh thế giới nếu cô ấy <strong>có</strong> đủ tiền."
+            },
+            {
+                id: 3,
+                parts: [
+                    { text: "If he " },
+                    { blankId: "b5", answer: "knew", hint: "(know)" },
+                    { text: " her phone number, he " },
+                    { blankId: "b6", answer: "would call", hint: "(call)" },
+                    { text: " her." }
+                ],
+                explanation: "Câu điều kiện loại 2 giả định tình huống trái với hiện tại (thực tế anh ấy không biết số điện thoại của cô ấy). Mệnh đề <strong>If</strong> chia Quá khứ đơn nên <em>know</em> đổi thành <strong>knew</strong>. Mệnh đề chính dùng <strong>would + V nguyên mẫu</strong> nên điền <strong>would call</strong>.",
+                translation: "Nếu anh ấy <strong>biết</strong> số điện thoại của cô ấy, anh ấy <strong>sẽ gọi</strong> cho cô ấy."
+            },
+            {
+                id: 4,
+                parts: [
+                    { text: "They " },
+                    { blankId: "b7", answer: "would buy", hint: "(buy)" },
+                    { text: " a bigger house if they " },
+                    { blankId: "b8", answer: "earned", hint: "(earn)" },
+                    { text: " more money." }
+                ],
+                explanation: "Mệnh đề chính đứng đầu câu nên chia <strong>would + V nguyên mẫu</strong> (<strong>would buy</strong>). Mệnh đề <strong>If</strong> đứng sau chia ở thì Quá khứ đơn để nêu điều kiện không có thật ở hiện tại; <em>earn</em> là động từ có quy tắc nên thêm <em>-ed</em> thành <strong>earned</strong>.",
+                translation: "Họ <strong>sẽ mua</strong> một ngôi nhà lớn hơn nếu họ <strong>kiếm được</strong> nhiều tiền hơn."
+            },
+            {
+                id: 5,
+                parts: [
+                    { text: "If we " },
+                    { blankId: "b9", answer: "didn't live", hint: "(not live)" },
+                    { text: " so far away, we " },
+                    { blankId: "b10", answer: "would visit", hint: "(visit)" },
+                    { text: " you more often." }
+                ],
+                explanation: "Mệnh đề <strong>If</strong> có từ <em>not</em> nên ta chia phủ định ở thì Quá khứ đơn bằng cách mượn trợ động từ <strong>didn't + V nguyên mẫu</strong> thành <strong>didn't live</strong>. Mệnh đề chính theo công thức câu điều kiện loại 2 chia là <strong>would visit</strong>.",
+                translation: "Nếu chúng tôi <strong>không sống</strong> quá xa, chúng tôi <strong>sẽ đến thăm</strong> bạn thường xuyên hơn."
+            },
+            {
+                id: 6,
+                parts: [
+                    { text: "He " },
+                    { blankId: "b11", answer: "would help", hint: "(help)" },
+                    { text: " you if he " },
+                    { blankId: "b12", answer: "were", hint: "(be)" },
+                    { text: " here." }
+                ],
+                explanation: "Mệnh đề chính đứng trước chia <strong>would + V nguyên mẫu</strong> là <strong>would help</strong>. Ở mệnh đề <strong>If</strong> phía sau, động từ <em>to be</em> trong câu điều kiện loại 2 ưu tiên dùng <strong>were</strong> cho tất cả các ngôi (kể cả ngôi số ít <em>he</em>) để nhấn mạnh giả định không có thật ở hiện tại.",
+                translation: "Anh ấy <strong>sẽ giúp</strong> bạn nếu anh ấy <strong>ở</strong> đây."
+            },
+            {
+                id: 7,
+                parts: [
+                    { text: "If it " },
+                    { blankId: "b13", answer: "rained", hint: "(rain)" },
+                    { text: ", we " },
+                    { blankId: "b14", answer: "would stay", hint: "(stay)" },
+                    { text: " at home." }
+                ],
+                explanation: "Giả định một tình huống ít có khả năng xảy ra ở hiện tại/tương lai. Mệnh đề <strong>If</strong> chia Quá khứ đơn (động từ có quy tắc <em>rain</em> thêm <em>-ed</em> thành <strong>rained</strong>). Mệnh đề chính chia <strong>would + V nguyên mẫu</strong> thành <strong>would stay</strong>.",
+                translation: "Nếu trời <strong>mưa</strong>, chúng tôi <strong>sẽ ở</strong> nhà."
+            },
+            {
+                id: 8,
+                parts: [
+                    { text: "I " },
+                    { blankId: "b15", answer: "would go", hint: "(go)" },
+                    { text: " to the concert if I " },
+                    { blankId: "b16", answer: "got", hint: "(get)" },
+                    { text: " a ticket." }
+                ],
+                explanation: "Mệnh đề chính đứng đầu câu nên chia <strong>would + V nguyên mẫu</strong> (<strong>would go</strong>). Mệnh đề <strong>If</strong> đứng sau chia thì Quá khứ đơn; động từ bất quy tắc <em>get</em> chuyển sang quá khứ là <strong>got</strong>.",
+                translation: "Tôi <strong>sẽ đi</strong> xem buổi hòa nhạc nếu tôi <strong>có được</strong> một tấm vé."
+            },
+            {
+                id: 9,
+                parts: [
+                    { text: "She " },
+                    { blankId: "b17", answer: "would cook", hint: "(cook)" },
+                    { text: " dinner if she " },
+                    { blankId: "b18", answer: "had", hint: "(have)" },
+                    { text: " time." }
+                ],
+                explanation: "Mệnh đề chính diễn tả hành động giả định (thực tế cô ấy không có thời gian) nên chia <strong>would + V nguyên mẫu</strong> là <strong>would cook</strong>. Mệnh đề <strong>If</strong> chia Quá khứ đơn, động từ <em>have</em> đổi thành <strong>had</strong>.",
+                translation: "Cô ấy <strong>sẽ nấu</strong> bữa tối nếu cô ấy <strong>có</strong> thời gian."
+            },
+            {
+                id: 10,
+                parts: [
+                    { text: "If I " },
+                    { blankId: "b19", answer: "won", hint: "(win)" },
+                    { text: " the lottery, I " },
+                    { blankId: "b20", answer: "would buy", hint: "(buy)" },
+                    { text: " a new car." }
+                ],
+                explanation: "Trúng số là giả định khó xảy ra ở hiện tại nên dùng câu điều kiện loại 2. Mệnh đề <strong>If</strong> chia Quá khứ đơn của động từ bất quy tắc <em>win</em> là <strong>won</strong>. Mệnh đề chính dùng <strong>would + V nguyên mẫu</strong> là <strong>would buy</strong>.",
+                translation: "Nếu tôi <strong>trúng</strong> xổ số, tôi <strong>sẽ mua</strong> một chiếc ô tô mới."
+            }
+        ];
+
+        // State management
+        let score = 0;
+        const totalBlanks = 20;
+        let selectedChipId = null; // For tap/click-to-place support
+        let feedbackTimeout = null;
+        let showingAllAnswers = false;
+
+        // DOM elements
+        const wordBankEl = document.getElementById('word-bank');
+        const sentencesContainerEl = document.getElementById('sentences-container');
+        const scoreDisplayEl = document.getElementById('score-display');
+        const progressBarEl = document.getElementById('progress-bar');
+        const feedbackBannerEl = document.getElementById('feedback-banner');
+        const selectedHintEl = document.getElementById('selected-hint');
+        const toggleAnswersBtn = document.getElementById('toggle-answers-btn');
+        const toggleAnswersText = document.getElementById('toggle-answers-text');
+        const resetBtn = document.getElementById('reset-btn');
+        const completionModal = document.getElementById('completion-modal');
+        const modalCloseBtn = document.getElementById('modal-close-btn');
+        const modalResetBtn = document.getElementById('modal-reset-btn');
+
+        // Fisher-Yates shuffle helper
+        function shuffleArray(array) {
+            const arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        // Show feedback toast banner
+        function showFeedback(message, type = 'success') {
+            clearTimeout(feedbackTimeout);
+            feedbackBannerEl.textContent = message;
+            feedbackBannerEl.className = 'text-sm font-semibold px-3 py-1 rounded-lg transition-opacity duration-300 opacity-100';
+
+            if (type === 'success') {
+                feedbackBannerEl.classList.add('bg-emerald-100', 'text-emerald-800', 'border', 'border-emerald-300');
+            } else {
+                feedbackBannerEl.classList.add('bg-rose-100', 'text-rose-800', 'border', 'border-rose-300');
+            }
+
+            feedbackTimeout = setTimeout(() => {
+                feedbackBannerEl.classList.remove('opacity-100');
+                feedbackBannerEl.classList.add('opacity-0');
+            }, 2200);
+        }
+
+        // Update Score & Progress bar
+        function updateScoreUI() {
+            scoreDisplayEl.textContent = `${score} / ${totalBlanks}`;
+            const pct = (score / totalBlanks) * 100;
+            progressBarEl.style.width = `${pct}%`;
+        }
+
+        // Select / Deselect a word chip on click/tap
+        function selectChip(chipId) {
+            if (showingAllAnswers) {
+                showFeedback('Hãy nhấn "Ẩn đáp án" để tiếp tục làm bài!', 'error');
+                return;
+            }
+
+            // Clear previous selection highlight
+            if (selectedChipId) {
+                const prevChip = document.getElementById(selectedChipId);
+                if (prevChip) {
+                    prevChip.classList.remove('selected');
+                }
+            }
+
+            // Toggle off if clicking the same chip
+            if (selectedChipId === chipId) {
+                selectedChipId = null;
+                selectedHintEl.classList.add('hidden');
+                return;
+            }
+
+            const chipEl = document.getElementById(chipId);
+            if (!chipEl || chipEl.dataset.used === 'true') {
+                selectedChipId = null;
+                selectedHintEl.classList.add('hidden');
+                return;
+            }
+
+            selectedChipId = chipId;
+            chipEl.classList.add('selected');
+            selectedHintEl.classList.remove('hidden');
+        }
+
+        // Evaluate an attempt to place a word chip into a drop zone
+        function handlePlacement(chipId, dropZoneEl) {
+            // Ignore if currently previewing all answers, already solved, or animating an error
+            if (showingAllAnswers || dropZoneEl.dataset.solved === 'true' || dropZoneEl.dataset.checking === 'true') return;
+
+            const chipEl = document.getElementById(chipId);
+            if (!chipEl || chipEl.dataset.used === 'true') return;
+
+            const chosenWord = chipEl.dataset.word;
+            const correctAnswer = dropZoneEl.dataset.answer;
+
+            // Clear tap selection highlight
+            if (selectedChipId === chipId) {
+                chipEl.classList.remove('selected');
+                selectedChipId = null;
+                selectedHintEl.classList.add('hidden');
+            }
+
+            if (chosenWord === correctAnswer) {
+                // CORRECT ANSWER
+                dropZoneEl.dataset.solved = 'true';
+                dropZoneEl.innerHTML = `
+                    <span class="font-bold text-emerald-900">${chosenWord}</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-emerald-600 inline ml-1 shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                    </svg>
+                `;
+                dropZoneEl.className = 'drop-zone inline-flex items-center justify-center min-w-[115px] px-3 py-0.5 mx-1 rounded-lg border-2 border-emerald-500 bg-emerald-100 text-emerald-900 font-bold shadow-xs animate-pop align-middle';
+
+                // Mark chip as used and hide it smoothly from the Word Bank
+                chipEl.dataset.used = 'true';
+                chipEl.classList.add('hidden');
+
+                score++;
+                updateScoreUI();
+                showFeedback(`Correct! "${chosenWord}" is right.`, 'success');
+
+                // Check if all 20 blanks are solved
+                if (score === totalBlanks) {
+                    setTimeout(() => {
+                        completionModal.classList.remove('hidden');
+                        completionModal.classList.add('flex');
+                    }, 500);
+                }
+            } else {
+                // WRONG ANSWER - Show visual error & allow immediate retry
+                dropZoneEl.dataset.checking = 'true';
+                dropZoneEl.innerHTML = `
+                    <span class="font-semibold text-rose-800">${chosenWord}</span>
+                    <span class="text-xs font-bold text-rose-600 ml-1.5">✕</span>
+                `;
+                dropZoneEl.className = 'drop-zone inline-flex items-center justify-center min-w-[115px] px-3 py-0.5 mx-1 rounded-lg border-2 border-rose-500 bg-rose-100 text-rose-900 animate-shake align-middle';
+
+                showFeedback(`Incorrect! "${chosenWord}" doesn't fit here — try again!`, 'error');
+
+                // Revert blank after 1 second so the user can retry immediately
+                setTimeout(() => {
+                    if (showingAllAnswers) return;
+                    dropZoneEl.dataset.checking = 'false';
+                    dropZoneEl.className = 'drop-zone inline-flex items-center justify-center min-w-[115px] h-8 px-3 mx-1 rounded-lg border-2 border-dashed border-slate-400 bg-white/80 text-slate-400 font-medium cursor-pointer hover:border-crimson hover:bg-white transition-all align-middle';
+                    dropZoneEl.innerHTML = `<span class="text-xs tracking-widest opacity-60">_______</span>`;
+                }, 1000);
+            }
+        }
+
+        // Toggle previewing all correct answers without overwriting user's actual progress
+        function toggleAllAnswers() {
+            showingAllAnswers = !showingAllAnswers;
+            const dropZones = document.querySelectorAll('.drop-zone');
+
+            if (showingAllAnswers) {
+                toggleAnswersText.textContent = 'Ẩn đáp án';
+                toggleAnswersBtn.classList.remove('bg-amber-500', 'hover:bg-amber-600');
+                toggleAnswersBtn.classList.add('bg-slate-600', 'hover:bg-slate-700');
+
+                dropZones.forEach(dz => {
+                    if (dz.dataset.solved === 'false') {
+                        dz.dataset.checking = 'false';
+                        dz.className = 'drop-zone inline-flex items-center justify-center gap-1 min-w-[115px] px-3 py-0.5 mx-1 rounded-lg border-2 border-amber-400 bg-amber-100 text-amber-900 font-bold transition-all align-middle';
+                        dz.innerHTML = `<span>${dz.dataset.answer}</span>`;
+                    }
+                });
+            } else {
+                toggleAnswersText.textContent = 'Đáp án';
+                toggleAnswersBtn.classList.remove('bg-slate-600', 'hover:bg-slate-700');
+                toggleAnswersBtn.classList.add('bg-amber-500', 'hover:bg-amber-600');
+
+                dropZones.forEach(dz => {
+                    if (dz.dataset.solved === 'false') {
+                        dz.className = 'drop-zone inline-flex items-center justify-center min-w-[115px] h-8 px-3 mx-1 rounded-lg border-2 border-dashed border-slate-400 bg-white/80 text-slate-400 font-medium cursor-pointer hover:border-crimson hover:bg-white transition-all align-middle';
+                        dz.innerHTML = `<span class="text-xs tracking-widest opacity-60">_______</span>`;
+                    }
+                });
+            }
+        }
+
+        // Toggle individual sentence explanation or translation box
+        function toggleSentenceDrawer(sentenceId, type) {
+            const explainBox = document.getElementById(`explain-box-${sentenceId}`);
+            const translateBox = document.getElementById(`translate-box-${sentenceId}`);
+            const explainBtn = document.getElementById(`explain-btn-${sentenceId}`);
+            const translateBtn = document.getElementById(`translate-btn-${sentenceId}`);
+
+            if (type === 'explain') {
+                const isHidden = explainBox.classList.contains('hidden');
+                if (isHidden) {
+                    explainBox.classList.remove('hidden');
+                    explainBtn.classList.add('ring-2', 'ring-emerald-300', 'bg-emerald-700');
+                } else {
+                    explainBox.classList.add('hidden');
+                    explainBtn.classList.remove('ring-2', 'ring-emerald-300', 'bg-emerald-700');
+                }
+            } else if (type === 'translate') {
+                const isHidden = translateBox.classList.contains('hidden');
+                if (isHidden) {
+                    translateBox.classList.remove('hidden');
+                    translateBtn.classList.add('ring-2', 'ring-red-300', 'bg-red-700');
+                } else {
+                    translateBox.classList.add('hidden');
+                    translateBtn.classList.remove('ring-2', 'ring-red-300', 'bg-red-700');
+                }
+            }
+        }
+
+        // Render the entire exercise
+        function initExercise() {
+            score = 0;
+            selectedChipId = null;
+            showingAllAnswers = false;
+            toggleAnswersText.textContent = 'Đáp án';
+            toggleAnswersBtn.classList.remove('bg-slate-600', 'hover:bg-slate-700');
+            toggleAnswersBtn.classList.add('bg-amber-500', 'hover:bg-amber-600');
+
+            updateScoreUI();
+            completionModal.classList.add('hidden');
+            completionModal.classList.remove('flex');
+            selectedHintEl.classList.add('hidden');
+            feedbackBannerEl.classList.remove('opacity-100');
+            feedbackBannerEl.classList.add('opacity-0');
+
+            // 1. Collect all 20 answers for the Word Bank (preserving duplicate instances like "were" x2, "had" x2, "would buy" x2)
+            const allWords = [];
+            exerciseData.forEach(sentence => {
+                sentence.parts.forEach(part => {
+                    if (part.blankId) {
+                        allWords.push({
+                            chipId: `chip-${part.blankId}`,
+                            word: part.answer
+                        });
+                    }
+                });
+            });
+
+            // 2. Shuffle and Render Word Bank Chips
+            const shuffledWords = shuffleArray(allWords);
+            wordBankEl.innerHTML = '';
+
+            shuffledWords.forEach(item => {
+                const chip = document.createElement('button');
+                chip.type = 'button';
+                chip.id = item.chipId;
+                chip.draggable = true;
+                chip.dataset.word = item.word;
+                chip.dataset.used = 'false';
+                chip.textContent = item.word;
+                chip.className = 'word-chip px-3.5 py-1.5 bg-slate-50 hover:bg-rose-50 text-slate-800 font-semibold text-sm sm:text-base rounded-xl border-2 border-slate-300 hover:border-crimson shadow-xs cursor-grab active:cursor-grabbing';
+
+                // Drag Events
+                chip.addEventListener('dragstart', (e) => {
+                    if (showingAllAnswers) {
+                        e.preventDefault();
+                        showFeedback('Hãy nhấn "Ẩn đáp án" để tiếp tục làm bài!', 'error');
+                        return;
+                    }
+                    chip.classList.add('dragging');
+                    e.dataTransfer.setData('text/plain', item.chipId);
+                    e.dataTransfer.effectAllowed = 'move';
+                });
+
+                chip.addEventListener('dragend', () => {
+                    chip.classList.remove('dragging');
+                });
+
+                // Click / Tap to select support
+                chip.addEventListener('click', () => {
+                    selectChip(item.chipId);
+                });
+
+                wordBankEl.appendChild(chip);
+            });
+
+            // 3. Render Sentences with Drop Zones + Action Buttons (Giải thích & Dịch nghĩa)
+            sentencesContainerEl.innerHTML = '';
+
+            exerciseData.forEach(sentence => {
+                const li = document.createElement('li');
+                li.className = 'flex flex-col border-b border-creamDark/70 pb-4 last:border-b-0 last:pb-0';
+
+                // Main row: Number + Sentence text + Small Action Buttons on the right
+                const mainRow = document.createElement('div');
+                mainRow.className = 'flex flex-col sm:flex-row sm:items-baseline justify-between gap-2.5';
+
+                const leftGroup = document.createElement('div');
+                leftGroup.className = 'flex items-baseline gap-2.5 flex-1';
+
+                const numberSpan = document.createElement('span');
+                numberSpan.className = 'font-bold text-slate-900 min-w-[1.75rem] text-right shrink-0';
+                numberSpan.textContent = `${sentence.id}.`;
+
+                const contentDiv = document.createElement('div');
+                contentDiv.className = 'flex-1 leading-loose';
+
+                sentence.parts.forEach(part => {
+                    if (part.text) {
+                        const textNode = document.createTextNode(part.text);
+                        contentDiv.appendChild(textNode);
+                    } else if (part.blankId) {
+                        // Drop Zone Element
+                        const dropZone = document.createElement('span');
+                        dropZone.id = part.blankId;
+                        dropZone.dataset.answer = part.answer;
+                        dropZone.dataset.solved = 'false';
+                        dropZone.dataset.checking = 'false';
+                        dropZone.className = 'drop-zone inline-flex items-center justify-center min-w-[115px] h-8 px-3 mx-1 rounded-lg border-2 border-dashed border-slate-400 bg-white/80 text-slate-400 font-medium cursor-pointer hover:border-crimson hover:bg-white transition-all align-middle';
+                        dropZone.innerHTML = `<span class="text-xs tracking-widest opacity-60">_______</span>`;
+
+                        // Drag Over / Leave / Drop Events
+                        dropZone.addEventListener('dragover', (e) => {
+                            e.preventDefault();
+                            if (!showingAllAnswers && dropZone.dataset.solved === 'false' && dropZone.dataset.checking === 'false') {
+                                dropZone.classList.add('drag-over');
+                            }
+                        });
+
+                        dropZone.addEventListener('dragleave', () => {
+                            dropZone.classList.remove('drag-over');
+                        });
+
+                        dropZone.addEventListener('drop', (e) => {
+                            e.preventDefault();
+                            dropZone.classList.remove('drag-over');
+                            const chipId = e.dataTransfer.getData('text/plain');
+                            if (chipId) {
+                                handlePlacement(chipId, dropZone);
+                            }
+                        });
+
+                        // Tap/Click-to-place support
+                        dropZone.addEventListener('click', () => {
+                            if (showingAllAnswers) {
+                                showFeedback('Hãy nhấn "Ẩn đáp án" để tiếp tục làm bài!', 'error');
+                                return;
+                            }
+                            if (selectedChipId) {
+                                handlePlacement(selectedChipId, dropZone);
+                            } else if (dropZone.dataset.solved === 'false') {
+                                showFeedback('Select or drag a word from the Word Bank first!', 'error');
+                            }
+                        });
+
+                        contentDiv.appendChild(dropZone);
+
+                        // Verb Hint in Brackets e.g. (be)
+                        const hintSpan = document.createElement('span');
+                        hintSpan.className = 'text-slate-700 font-medium ml-0.5';
+                        hintSpan.textContent = ` ${part.hint}`;
+                        contentDiv.appendChild(hintSpan);
+                    }
+                });
+
+                leftGroup.appendChild(numberSpan);
+                leftGroup.appendChild(contentDiv);
+
+                // Action Buttons Group: Green "Giải thích" + Red "Dịch nghĩa"
+                const btnGroup = document.createElement('div');
+                btnGroup.className = 'flex items-center gap-1.5 pl-9 sm:pl-0 shrink-0 self-start sm:self-center';
+
+                const explainBtn = document.createElement('button');
+                explainBtn.id = `explain-btn-${sentence.id}`;
+                explainBtn.type = 'button';
+                explainBtn.className = 'inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white text-xs font-semibold rounded-lg shadow-xs transition-all cursor-pointer';
+                explainBtn.innerHTML = `
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                    </svg>
+                    <span>Giải thích</span>
+                `;
+                explainBtn.addEventListener('click', () => toggleSentenceDrawer(sentence.id, 'explain'));
+
+                const translateBtn = document.createElement('button');
+                translateBtn.id = `translate-btn-${sentence.id}`;
+                translateBtn.type = 'button';
+                translateBtn.className = 'inline-flex items-center gap-1 px-2.5 py-1 bg-crimson hover:bg-red-700 active:scale-95 text-white text-xs font-semibold rounded-lg shadow-xs transition-all cursor-pointer';
+                translateBtn.innerHTML = `
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
+                    </svg>
+                    <span>Dịch nghĩa</span>
+                `;
+                translateBtn.addEventListener('click', () => toggleSentenceDrawer(sentence.id, 'translate'));
+
+                btnGroup.appendChild(explainBtn);
+                btnGroup.appendChild(translateBtn);
+
+                mainRow.appendChild(leftGroup);
+                mainRow.appendChild(btnGroup);
+                li.appendChild(mainRow);
+
+                // Collapsible Drawers Container (below each sentence)
+                const drawersWrapper = document.createElement('div');
+                drawersWrapper.className = 'pl-9 mt-2 space-y-2';
+
+                // 1. Explanation Box (Green theme)
+                const explainBox = document.createElement('div');
+                explainBox.id = `explain-box-${sentence.id}`;
+                explainBox.className = 'hidden bg-emerald-50/90 border border-emerald-200 text-emerald-950 rounded-xl px-4 py-2.5 text-sm leading-relaxed shadow-2xs animate-pop';
+                explainBox.innerHTML = `
+                    <div class="flex items-start gap-2">
+                        <span class="inline-block px-1.5 py-0.5 bg-emerald-600 text-white text-[11px] font-bold uppercase rounded-md shrink-0 mt-0.5">Giải thích</span>
+                        <p>${sentence.explanation}</p>
+                    </div>
+                `;
+
+                // 2. Translation Box (Red theme)
+                const translateBox = document.createElement('div');
+                translateBox.id = `translate-box-${sentence.id}`;
+                translateBox.className = 'hidden bg-red-50/90 border border-red-200 text-red-950 rounded-xl px-4 py-2.5 text-sm leading-relaxed shadow-2xs animate-pop';
+                translateBox.innerHTML = `
+                    <div class="flex items-start gap-2">
+                        <span class="inline-block px-1.5 py-0.5 bg-crimson text-white text-[11px] font-bold uppercase rounded-md shrink-0 mt-0.5">Dịch nghĩa</span>
+                        <p>${sentence.translation}</p>
+                    </div>
+                `;
+
+                drawersWrapper.appendChild(explainBox);
+                drawersWrapper.appendChild(translateBox);
+                li.appendChild(drawersWrapper);
+
+                sentencesContainerEl.appendChild(li);
+            });
+        }
+
+        // Event Listeners for Buttons
+        toggleAnswersBtn.addEventListener('click', toggleAllAnswers);
+        resetBtn.addEventListener('click', initExercise);
+        modalResetBtn.addEventListener('click', initExercise);
+        modalCloseBtn.addEventListener('click', () => {
+            completionModal.classList.add('hidden');
+            completionModal.classList.remove('flex');
+        });
+
+        // Start on load
+        window.addEventListener('DOMContentLoaded', initExercise);
+    </script>
+</body>
+</html>
